@@ -1,5 +1,6 @@
 const mysql = require('mysql');
 const dataBase = require('../config/dataBase');
+const buildOrderId = require('../utils/buildOrderId');
 const connection = mysql.createConnection({
   ...dataBase.mysql
 });
@@ -30,6 +31,32 @@ const getOrderList = (pageIndex = 1, pageSize = 10) => {
 
 }
 
+/*
+ * @description: 创建订单
+ * @author: lindingfeng
+ * @date: 2019-07-11 22:05:20
+*/
+const addOrder = (order_name) => {
+
+  return new Promise((resolve, reject) => {
+    
+    const orderInfo = `'MySQL', '${buildOrderId()}', '${order_name}'`
+
+    connection.query(
+      `insert into test.order_list values(${orderInfo})`,
+    (error, results) => {
+      if (error) {
+        reject(error);
+        return
+      }
+      resolve(results)
+    })
+    
+  })
+
+}
+
 module.exports = {
-  getOrderList
+  getOrderList,
+  addOrder
 }

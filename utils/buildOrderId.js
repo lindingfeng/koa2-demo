@@ -15,6 +15,4 @@ const buildOrderId = () => {
   return dateY+dateM+dateD+random
 }
 
-module.exports = {
-  buildOrderId
-}
+module.exports = buildOrderId

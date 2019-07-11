@@ -19,6 +19,7 @@ const cors = require('koa2-cors');
 // 引入api路由
 const indexRouter = require('./routers/index');
 const orderRouter = require('./routers/order');
+const userRouter = require('./routers/user');
 
 // 创建一个Koa对象
 const app = new Koa()
@@ -35,6 +36,7 @@ app.use(static(path.join(__dirname, './public/')))
 // 注册路由
 app.use(indexRouter.routes())
 app.use(orderRouter.routes())
+app.use(userRouter.routes())
 
 app.listen(3001)
 console.log(`app started at port 3001 for MySQL...`)

@@ -16,12 +16,6 @@
 </head>
 <body>
   <div id="app">
-      <van-cell-group title="登录">
-        <van-cell title="登录" is-link to="index" />
-      </van-cell-group>
-      <van-cell-group title="注册">
-        <van-cell title="注册" is-link to="index" />
-      </van-cell-group>
       <van-cell-group>
         <van-field v-model="orderName" placeholder="请输入商品名" />
       </van-cell-group>
@@ -187,11 +181,9 @@
           })
           .then(function (res) {
             if (+res.data._errCode === 0) {
-              if (+res.data._data.status === 1) {
-                _this.$toast.success('登录成功!')
-                return
-              }
-              _this.$toast.fail(res.data._data.tip)
+              _this.$toast.success('登录成功!')
+            } else {
+              _this.$toast.fail(res.data._errStr)
             }
           })
         },
@@ -219,11 +211,9 @@
           })
           .then(function (res) {
             if (+res.data._errCode === 0) {
-              if (+res.data._data.status === 1) {
-                _this.$toast.success('注册成功!')
-                return
-              }
-              _this.$toast.fail('已注册用户，可直接登录!')
+              _this.$toast.success('注册成功!')
+            } else {
+              _this.$toast.fail(res.data._errStr)
             }
           })
         },
