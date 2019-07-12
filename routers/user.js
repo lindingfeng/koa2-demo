@@ -66,4 +66,36 @@ router.post('/api/registered', async (ctx, next) => {
 
 })
 
+/*
+ * @Description: 修改密码
+ * @Author: lindingfeng
+ * @Date: 2019-07-12 17:54:23
+*/
+router.post('/api/changePwd', async (ctx, next) => {
+
+  const { phone, old_password, new_password } = ctx.request.body
+
+  try {
+    let ret = await mysqlUser.changePwd(phone, old_password, new_password)
+
+    if (+ret.status === 1) {
+
+      ctx.response.body = configStatus()
+
+    } else if (+ret.status === 2) {
+
+      ctx.response.body = configStatus({}, 1005, '旧密码错误')
+
+    } else if (+ret.status === 3) {
+
+      ctx.response.body = configStatus({}, 1006, '该手机号未注册')
+
+    }
+
+  } catch (err) {
+    console.log(err.errno)
+  }
+
+})
+
 module.exports = router

@@ -9,7 +9,10 @@ const configStatus = require('../utils/configStatus')
 */
 router.post('/api/getOrderList', async (ctx, next) => {
   
-  const { pageIndex = 1, pageSize = 10 } = ctx.request.body
+  let { pageIndex = 1, pageSize = 10 } = ctx.request.body
+
+  if (pageIndex <= 0) pageIndex = 1
+  if (pageSize <= 0) pageSize = 10
 
   try {
     let ret = await mysqlOrder.getOrderList(pageIndex, pageSize)
