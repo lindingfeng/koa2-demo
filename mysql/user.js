@@ -2,6 +2,7 @@ const mysql = require('mysql');
 const sha1 = require('sha1');
 const dataBase = require('../config/dataBase');
 const jwt = require('jsonwebtoken');
+const path = require('path')
 const connection = mysql.createConnection({
   ...dataBase.mysql
 });
@@ -17,6 +18,7 @@ connection.connect();
 const login = (phone, password) => {
 
   return new Promise((resolve, reject) => {
+    console.log(path.join(__dirname, '../public/'))
 
     // 查询登录手机号是否已存在
     connection.query(

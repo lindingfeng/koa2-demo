@@ -10,6 +10,9 @@ const static = require('koa-static');
 // 处理post请求解析body或表单中的参数
 const bodyParser = require('koa-bodyparser')
 
+// 文件上传
+const koaBody = require('koa-body')
+
 // node路径模块
 const path = require('path')
 
@@ -20,9 +23,18 @@ const cors = require('koa2-cors');
 const indexRouter = require('./routers/index');
 const orderRouter = require('./routers/order');
 const userRouter = require('./routers/user');
+const uploadfileRouter = require('./routers/uploadfile');
 
 // 创建一个Koa对象
 const app = new Koa()
+
+// 注册上传插件
+app.use(koaBody({
+  multipart: true,
+  formidable: {
+    maxFileSize: 200*1024*1024
+  }
+}))
 
 // koa-bodyparser必须在koa-router之前注册
 app.use(bodyParser())
@@ -37,6 +49,7 @@ app.use(static(path.join(__dirname, './public/')))
 app.use(indexRouter.routes())
 app.use(orderRouter.routes())
 app.use(userRouter.routes())
+app.use(uploadfileRouter.routes())
 
 app.listen(3001)
 console.log(`app started at port 3001 for MySQL...`)
