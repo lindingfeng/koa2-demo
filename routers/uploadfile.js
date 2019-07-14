@@ -4,7 +4,6 @@ const path = require('path')
 const configStatus = require('../utils/configStatus')
 
 router.post('/api/uploadfile', async (ctx, next) => {
-  console.log(ctx.request)
   // 获取上传文件
   const file = ctx.request.files.file
   // 创建可读流
