@@ -43,7 +43,11 @@ const addOrder = (order_name) => {
     const orderInfo = `'MySQL', '${buildOrderId()}', '${order_name}'`
 
     connection.query(
-      `insert into test.order_list values(${orderInfo})`,
+      `insert into test.order_list(
+        type,
+        order_id,
+        order_name
+      ) values(${orderInfo})`,
     (error, results) => {
       if (error) {
         reject(error);

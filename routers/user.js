@@ -90,6 +90,10 @@ router.post('/api/changePwd', async (ctx, next) => {
 
       ctx.response.body = configStatus({}, 1006, '该手机号未注册')
 
+    } else if (+ret.status === 4) {
+
+      ctx.response.body = configStatus({}, 1007, '旧密码与新密码不能一样')
+
     }
 
   } catch (err) {

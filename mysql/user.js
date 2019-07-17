@@ -97,7 +97,12 @@ const registered = (phone, password) => {
       const userInfo = `${parseInt(Math.random()*100)}, '${phone}', '${sha1(password)}', '${token}'`
 
       connection.query(
-        `insert into test.user_list values(${userInfo})`,
+        `insert into test.user_list(
+          user_id,
+          phone,
+          password,
+          token
+        ) values(${userInfo})`,
       (error, results) => {
         
         if (error) {
@@ -141,49 +146,47 @@ const changePwd = (phone, old_password, new_password) => {
 
       // 找到手机号
       if (results.length) {
-        
-        connection.query(
-          `select * from test.user_list where password='${sha1(old_password)}'`,
-        (error, results) => {
 
-          if (error) {
-            reject(error);
-            return
-          }
+        // 验证旧密码正确
+        if (results[0].password === sha1(old_password)) {
 
-          // 验证旧密码正确
-          if (results.length) {
-
-            connection.query(
-              `update test.user_list set password='${sha1(new_password)}' where user_id=${results[0].user_id};`,
-            (error, results) => {
-
-              if (error) {
-                reject(error);
-                return
-              }
-
-              if (results.affectedRows) {
-                resolve({
-                  status: 1,
-                  tip: '密码修改成功'
-                })
-              }
-
-              resolve({
-                status: 1,
-                tip: '密码修改成功'
-              })
-
+          if (results[0].password === sha1(new_password)) {
+            resolve({
+              status: 4,
+              tip: '旧密码与新密码不能一样'
             })
             return
           }
 
-          resolve({
-            status: 2,
-            tip: '旧密码错误'
-          })
+          connection.query(
+            `update test.user_list set password='${sha1(new_password)}' where user_id=${results[0].user_id};`,
+          (error, results) => {
 
+            if (error) {
+              reject(error);
+              return
+            }
+
+            if (results.affectedRows) {
+              console.log(results)
+              resolve({
+                status: 1,
+                tip: '密码修改成功'
+              })
+            }
+
+            resolve({
+              status: 1,
+              tip: '密码修改成功'
+            })
+
+          })
+          return
+        }
+
+        resolve({
+          status: 2,
+          tip: '旧密码错误'
         })
         return
         
