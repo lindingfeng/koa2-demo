@@ -18,7 +18,6 @@ connection.connect();
 const login = (phone, password) => {
 
   return new Promise((resolve, reject) => {
-    console.log(path.join(__dirname, '../public/'))
 
     // 查询登录手机号是否已存在
     connection.query(
@@ -26,7 +25,7 @@ const login = (phone, password) => {
     (error, results) => {
 
       if (error) {
-        reject(error);
+        reject(error)
         return
       }
 
@@ -35,11 +34,31 @@ const login = (phone, password) => {
 
         // 密码正确
         if (results[0].password === sha1(password)) {
-          resolve({
-            status: 1,
-            token: results[0].token
+
+          const secretOrPrivateKey = 'lindingfeng'
+          const userId = results[0].user_id
+          const token = jwt.sign({ userId }, secretOrPrivateKey, { expiresIn: 60*60 })
+
+          connection.query(
+            `update test.user_list set token='${token}' where phone='${phone}'`,
+          (error, results) => {
+
+            if (error) {
+              reject(error)
+              return
+            }
+
+            if (results.affectedRows) {
+              resolve({
+                status: 1,
+                token: token
+              })
+            }
+
           })
+
           return
+
         }
 
         // 密码错误
@@ -78,7 +97,7 @@ const registered = (phone, password) => {
     (error, results) => {
 
       if (error) {
-        reject(error);
+        reject(error)
         return
       }
 
@@ -93,8 +112,9 @@ const registered = (phone, password) => {
 
       // 用户未注册
       const secretOrPrivateKey = 'lindingfeng'
-      const token = jwt.sign({ phone, password }, secretOrPrivateKey, { expiresIn: 60*60 })
-      const userInfo = `${parseInt(Math.random()*100)}, '${phone}', '${sha1(password)}', '${token}'`
+      const userId = parseInt(Math.random()*100)
+      const token = jwt.sign({ userId }, secretOrPrivateKey, { expiresIn: 60 })
+      const userInfo = `${userId}, '${phone}', '${sha1(password)}', '${token}'`
 
       connection.query(
         `insert into test.user_list(
@@ -106,7 +126,7 @@ const registered = (phone, password) => {
       (error, results) => {
         
         if (error) {
-          reject(error);
+          reject(error)
           return
         }
 
@@ -140,7 +160,7 @@ const changePwd = (phone, old_password, new_password) => {
     (error, results) => {
 
       if (error) {
-        reject(error);
+        reject(error)
         return
       }
 
@@ -163,7 +183,7 @@ const changePwd = (phone, old_password, new_password) => {
           (error, results) => {
 
             if (error) {
-              reject(error);
+              reject(error)
               return
             }
 

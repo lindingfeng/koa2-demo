@@ -22,7 +22,7 @@ const getOrderList = (pageIndex = 1, pageSize = 10) => {
       `select * from test.order_list limit ${offset}, ${pageSize}`,
     (error, results) => {
       if (error) {
-        reject(error);
+        reject(error)
         return
       }
       resolve(results)
@@ -50,7 +50,7 @@ const addOrder = (order_name) => {
       ) values(${orderInfo})`,
     (error, results) => {
       if (error) {
-        reject(error);
+        reject(error)
         return
       }
       resolve(results)

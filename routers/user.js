@@ -17,7 +17,8 @@ router.post('/api/login', async (ctx, next) => {
     if (+ret.status === 1) {
 
       ctx.response.body = configStatus({
-        ...ret
+        ...ret,
+        avatar: 'http://localhost:3001/static/user.png'
       })
 
     } else if (+ret.status === 2) {
@@ -33,6 +34,34 @@ router.post('/api/login', async (ctx, next) => {
   } catch (err) {
     console.log(err.errno)
   }
+
+})
+
+/*
+ * @description: 校验登录态
+ * @author: lindingfeng
+ * @date: 2019-07-23 22:01:31
+*/
+router.post('/api/checkLoginState', async (ctx, next) => {
+
+  const { token } = ctx.request.body
+  const secretOrPrivateKey = 'lindingfeng'
+  let verifyToken
+  let tokenStatus = 1
+
+  try {
+    verifyToken = jwt.verify(token, secretOrPrivateKey)
+    // console.log(verifyToken)
+  } catch (err) {
+    // console.log(err.message === 'jwt expired', 'true表示token已过期')
+    if (err.message === 'jwt expired') {
+      tokenStatus = 2
+    }
+  }
+
+  ctx.response.body = configStatus({
+    status: tokenStatus
+  })
 
 })
 

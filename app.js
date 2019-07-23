@@ -21,6 +21,7 @@ const cors = require('koa2-cors');
 
 // 引入api路由
 const indexRouter = require('./routers/index');
+const shopRouter = require('./routers/shop');
 const orderRouter = require('./routers/order');
 const userRouter = require('./routers/user');
 const uploadfileRouter = require('./routers/uploadfile');
@@ -47,6 +48,7 @@ app.use(static(path.join(__dirname, './public/')))
 
 // 注册路由
 app.use(indexRouter.routes())
+app.use(shopRouter.routes())
 app.use(orderRouter.routes())
 app.use(userRouter.routes())
 app.use(uploadfileRouter.routes())
