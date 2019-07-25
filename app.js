@@ -24,6 +24,7 @@ const indexRouter = require('./routers/index');
 const shopRouter = require('./routers/shop');
 const orderRouter = require('./routers/order');
 const userRouter = require('./routers/user');
+const addressRouter = require('./routers/address');
 const uploadfileRouter = require('./routers/uploadfile');
 
 // 创建一个Koa对象
@@ -51,6 +52,7 @@ app.use(indexRouter.routes())
 app.use(shopRouter.routes())
 app.use(orderRouter.routes())
 app.use(userRouter.routes())
+app.use(addressRouter.routes())
 app.use(uploadfileRouter.routes())
 
 app.listen(3001)

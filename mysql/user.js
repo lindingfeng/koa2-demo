@@ -2,7 +2,6 @@ const mysql = require('mysql');
 const sha1 = require('sha1');
 const dataBase = require('../config/dataBase');
 const jwt = require('jsonwebtoken');
-const path = require('path')
 const connection = mysql.createConnection({
   ...dataBase.mysql
 });
@@ -37,7 +36,7 @@ const login = (phone, password) => {
 
           const secretOrPrivateKey = 'lindingfeng'
           const userId = results[0].user_id
-          const token = jwt.sign({ userId }, secretOrPrivateKey, { expiresIn: 60*60 })
+          const token = jwt.sign({ userId }, secretOrPrivateKey, { expiresIn: 60*10 })
 
           connection.query(
             `update test.user_list set token='${token}' where phone='${phone}'`,

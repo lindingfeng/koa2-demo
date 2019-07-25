@@ -1,4 +1,5 @@
 const router = require('koa-router')()
+const jwt = require('jsonwebtoken')
 const mysqlUser = require('../mysql/user')
 const configStatus = require('../utils/configStatus')
 
@@ -48,12 +49,12 @@ router.post('/api/checkLoginState', async (ctx, next) => {
   const secretOrPrivateKey = 'lindingfeng'
   let verifyToken
   let tokenStatus = 1
-
+  
   try {
     verifyToken = jwt.verify(token, secretOrPrivateKey)
-    // console.log(verifyToken)
+    console.log(verifyToken)
   } catch (err) {
-    // console.log(err.message === 'jwt expired', 'true表示token已过期')
+    console.log('------', err.message === 'jwt expired'?'token已过期':'', '------')
     if (err.message === 'jwt expired') {
       tokenStatus = 2
     }
