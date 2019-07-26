@@ -14,12 +14,17 @@ router.post('/api/getAddress', async (ctx, next) => {
   const secretOrPrivateKey = 'lindingfeng'
   let verifyToken
 
+  if (!token) {
+    ctx.response.body = configStatus({}, '1010', '未登录或登录态已失效')
+    return
+  }
+
   try {
     verifyToken = jwt.verify(token, secretOrPrivateKey)
   } catch (err) {
     console.log('------', err.message === 'jwt expired'?'token已过期':'', '------')
     if (err.message === 'jwt expired') {
-      ctx.response.body = configStatus({}, '1010', '登录态已失效')
+      ctx.response.body = configStatus({}, '1010', '未登录或登录态已失效')
       return
     }
   }
