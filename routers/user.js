@@ -28,7 +28,7 @@ router.post('/api/login', async (ctx, next) => {
 
     } else if (+ret.status === 3) {
 
-      ctx.response.body = configStatus({}, 1003, '密码错误666')
+      ctx.response.body = configStatus({}, 1003, '密码错误')
 
     }
 
