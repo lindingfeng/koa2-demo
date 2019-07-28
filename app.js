@@ -1,9 +1,6 @@
 // 导入koa类
 const Koa = require('koa')
 
-// const jwt = require('jsonwebtoken');
-// const sha1 = require('sha1');
-
 // 处理静态文件
 const static = require('koa-static');
 
@@ -55,5 +52,5 @@ app.use(userRouter.routes())
 app.use(addressRouter.routes())
 app.use(uploadfileRouter.routes())
 
-app.listen(3001)
-console.log(`app started at port 3001 for MySQL...`)
+app.listen(3000)
+console.log(`app started at port 3000 for MySQL...`)

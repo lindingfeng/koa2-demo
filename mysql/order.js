@@ -19,7 +19,7 @@ const getOrderList = (pageIndex = 1, pageSize = 10) => {
 
   return new Promise((resolve, reject) => {
     connection.query(
-      `select * from test.order_list limit ${offset}, ${pageSize}`,
+      `select * from lin.order_list limit ${offset}, ${pageSize}`,
     (error, results) => {
       if (error) {
         reject(error)
@@ -43,7 +43,7 @@ const addOrder = (order_name) => {
     const orderInfo = `'MySQL', '${buildOrderId()}', '${order_name}'`
 
     connection.query(
-      `insert into test.order_list(
+      `insert into lin.order_list(
         type,
         order_id,
         order_name

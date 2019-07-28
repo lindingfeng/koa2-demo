@@ -1,12 +1,12 @@
 module.exports = {
   mysql: {
-    host: 'localhost',
+    host: '132.232.35.229',
     user: 'root',
     password: 'wsjj1994',
-    database: 'test'
+    database: 'lin'
   },
-  mongodb: {
-    host: 'localhost',
-    database: 'test'
-  }
+  // mongodb: {
+  //   host: '132.232.35.229',
+  //   database: 'test'
+  // }
 }

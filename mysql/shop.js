@@ -18,7 +18,7 @@ const addCategory = (shopCategory) => {
   return new Promise((resolve, reject) => {
 
     connection.query(
-      `select * from test.shop_category_list where category_name='${shopCategory}'`,
+      `select * from lin.shop_category_list where category_name='${shopCategory}'`,
     (error, results) => { 
 
       if (error) {
@@ -35,7 +35,7 @@ const addCategory = (shopCategory) => {
       }
 
       connection.query(
-        `insert into test.shop_category_list(
+        `insert into lin.shop_category_list(
           category_name
         ) values('${shopCategory}')`,
       (error, results) => {
@@ -70,7 +70,7 @@ const getCategory = () => {
   return new Promise((resolve, reject) => {
 
     connection.query(
-      `select * from test.shop_category_list`,
+      `select * from lin.shop_category_list`,
     (error, results) => { 
 
       if (error) {
@@ -107,7 +107,7 @@ const addShop = ({
   return new Promise((resolve, reject) => {
 
     connection.query(
-      `select * from test.shop_category_list where category_id=${shop_category_id}`,
+      `select * from lin.shop_category_list where category_id=${shop_category_id}`,
     (error, results) => { 
 
       if (error) {
@@ -130,7 +130,7 @@ const addShop = ({
           '${shop_freight}'
         `
         connection.query(
-          `insert into test.shop_list(
+          `insert into lin.shop_list(
             shop_id,
             shop_banner,
             shop_name,
@@ -182,7 +182,7 @@ const getShopList = () => {
   return new Promise((resolve, reject) => {
 
     connection.query(
-      `select * from test.shop_list`,
+      `select * from lin.shop_list`,
     (error, results) => { 
 
       if (error) {

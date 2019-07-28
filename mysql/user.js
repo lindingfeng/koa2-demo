@@ -20,7 +20,7 @@ const login = (phone, password) => {
 
     // 查询登录手机号是否已存在
     connection.query(
-      `select * from test.user_list where phone='${phone}'`,
+      `select * from lin.user_list where phone='${phone}'`,
     (error, results) => {
 
       if (error) {
@@ -39,7 +39,7 @@ const login = (phone, password) => {
           const token = jwt.sign({ userId }, secretOrPrivateKey, { expiresIn: 60*10 })
 
           connection.query(
-            `update test.user_list set token='${token}' where phone='${phone}'`,
+            `update lin.user_list set token='${token}' where phone='${phone}'`,
           (error, results) => {
 
             if (error) {
@@ -92,7 +92,7 @@ const registered = (phone, password) => {
 
     // 查询登录手机号是否已存在
     connection.query(
-      `select * from test.user_list where phone='${phone}'`,
+      `select * from lin.user_list where phone='${phone}'`,
     (error, results) => {
 
       if (error) {
@@ -116,7 +116,7 @@ const registered = (phone, password) => {
       const userInfo = `${userId}, '${phone}', '${sha1(password)}', '${token}'`
 
       connection.query(
-        `insert into test.user_list(
+        `insert into lin.user_list(
           user_id,
           phone,
           password,
@@ -155,7 +155,7 @@ const changePwd = (phone, old_password, new_password) => {
 
     // 查询修改密码手机号是否已存在
     connection.query(
-      `select * from test.user_list where phone='${phone}'`,
+      `select * from lin.user_list where phone='${phone}'`,
     (error, results) => {
 
       if (error) {
@@ -178,7 +178,7 @@ const changePwd = (phone, old_password, new_password) => {
           }
 
           connection.query(
-            `update test.user_list set password='${sha1(new_password)}' where user_id=${results[0].user_id};`,
+            `update lin.user_list set password='${sha1(new_password)}' where user_id=${results[0].user_id};`,
           (error, results) => {
 
             if (error) {

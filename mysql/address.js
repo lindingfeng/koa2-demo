@@ -11,14 +11,14 @@ connection.connect();
  * @description: 获取收货地址列表
  * @author: lindingfeng
  * @date: 2019-07-24 23:30:50
-*/
+*/  
 const getAddress = (userId) => {
 
   return new Promise((resolve, reject) => {
 
     // 查询登录手机号是否已存在
     connection.query(
-      `select * from test.address_list where user_id='${userId}'`,
+      `select * from lin.address_list where user_id='${userId}'`,
     (error, results) => {
 
       if (error) {
@@ -48,7 +48,7 @@ const getAddressInfo = (addressId) => {
 
     // 查询登录手机号是否已存在
     connection.query(
-      `select * from test.address_list where id='${addressId}'`,
+      `select * from lin.address_list where id='${addressId}'`,
     (error, results) => {
 
       if (error) {
@@ -84,7 +84,7 @@ const addAddress = (addressInfo) => {
     `
 
     connection.query(
-      `insert into test.address_list(
+      `insert into lin.address_list(
         user_id,
         name,
         phone,
