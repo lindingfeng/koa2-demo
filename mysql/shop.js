@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 const dataBase = require('../config/dataBase');
 const uuidv1 = require('uuid/v1');
+const dayjs = require('dayjs');
 const connection = mysql.createConnection({
   ...dataBase.mysql
 });
@@ -13,12 +14,16 @@ connection.connect();
  * @author: lindingfeng
  * @date: 2019-07-20 14:49:21
 */
-const addCategory = (shopCategory) => {
+const addCategory = ({
+  category_name,
+  category_icon,
+  category_status
+}) => {
 
   return new Promise((resolve, reject) => {
 
     connection.query(
-      `select * from lin.shop_category_list where category_name='${shopCategory}'`,
+      `select * from lin.shop_category_list where category_name='${category_name}'`,
     (error, results) => { 
 
       if (error) {
@@ -36,8 +41,16 @@ const addCategory = (shopCategory) => {
 
       connection.query(
         `insert into lin.shop_category_list(
-          category_name
-        ) values('${shopCategory}')`,
+          category_name,
+          category_icon,
+          category_status,
+          create_time
+        ) values(
+          '${category_name}',
+          '${category_icon}',
+           ${category_status},
+           ${dayjs().unix()}
+        )`,
       (error, results) => {
   
         if (error) {
@@ -52,6 +65,66 @@ const addCategory = (shopCategory) => {
           })
         }
   
+      })
+
+    })
+    
+  })
+
+}
+
+/*
+ * @description: 编辑商品分类
+ * @author: lindingfeng
+ * @date: 2019-07-20 14:49:21
+*/
+const editCategory = ({
+  category_id,
+  category_name,
+  category_icon,
+  category_status
+}) => {
+
+  return new Promise((resolve, reject) => {
+
+    connection.query(
+      `select * from lin.shop_category_list where category_id='${category_id}'`,
+    (error, results) => { 
+
+      if (error) {
+        reject(error)
+        return
+      }
+
+      if (results.length) {
+
+        connection.query(
+          `update lin.shop_category_list set
+            category_name='${category_name}',
+            category_icon='${category_icon}',
+            category_status=${category_status}
+            where category_id=${Number(category_id)};`,
+        (error, results) => {
+    
+          if (error) {
+            reject(error)
+            return
+          }
+  
+          if (results.affectedRows) {
+            resolve({
+              status: 1,
+              tip: '分类添加成功'
+            })
+          }
+    
+        })
+        return
+      }
+
+      resolve({
+        status: 2,
+        tip: '未找到该分类'
       })
 
     })
@@ -79,6 +152,9 @@ const getCategory = () => {
       }
 
       if (results) {
+        results.forEach(ele => {
+          ele.create_time = dayjs.unix(ele.create_time).format("YYYY-MM-DD HH:mm:ss")
+        })
         resolve(results)
       }
 
@@ -205,6 +281,7 @@ const getShopList = () => {
 
 module.exports = {
   addCategory,
+  editCategory,
   getCategory,
   addShop,
   getShopList

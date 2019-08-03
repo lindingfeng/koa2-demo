@@ -15,7 +15,7 @@ router.post('/api/uploadfile', async (ctx, next) => {
   // 可读流通过管道写入可写流
   reader.pipe(upStream)
   ctx.response.body = configStatus({
-    src: `${ctx.request.host}/static/${file.name}`
+    src: `http://${ctx.request.host}/static/${file.name}`
   })
 })
 

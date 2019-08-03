@@ -8,12 +8,46 @@ const configStatus = require('../utils/configStatus')
  * @author: lindingfeng
  * @date: 2019-07-20 14:49:21
 */
-router.post('/api/addCategory', async (ctx, next) => {
+// router.post('/api/addCategory', async (ctx, next) => {
+router.post('/api/operationCategory', async (ctx, next) => {
 
-  const { shopCategory } = ctx.request.body
+  const { 
+    category_id,
+    category_name,
+    category_icon,
+    category_status
+   } = ctx.request.body
+
+  if (!category_name || !category_icon || !category_status) {
+    ctx.response.body = configStatus({}, 1012, '请完善分类信息')
+    return
+  }
+
+  if (category_id) {
+    try {
+      let ret = await mysqlShop.editCategory({
+        category_id,
+        category_name,
+        category_icon,
+        category_status
+      })
+      if (+ret.status === 1) {
+        ctx.response.body = configStatus()
+      } else if (+ret.status === 2) {
+        ctx.response.body = configStatus({}, 1013, '未找到该分类')
+      }
+    } catch (err) {
+      console.log(err)
+    }
+    return
+  }
 
   try {
-    let ret = await mysqlShop.addCategory(shopCategory)
+    let ret = await mysqlShop.addCategory({
+      category_name,
+      category_icon,
+      category_status
+    })
     if (+ret.status === 1) {
       ctx.response.body = configStatus()
     } else if (+ret.status === 2) {
@@ -44,7 +78,7 @@ router.post('/api/getCategory', async (ctx, next) => {
 })
 
 /*
- * @description: 添加商品
+ * @description: 添加/编辑商品
  * @author: lindingfeng
  * @date: 2019-07-20 17:22:18
 */
@@ -73,21 +107,6 @@ router.post('/api/addShop', async (ctx, next) => {
  * @date: 2019-07-20 18:17:27
 */
 router.post('/api/getShopList', async (ctx, next) => {
-
-  // const { token } = ctx.request.body
-  // const secretOrPrivateKey = 'lindingfeng'
-  // let verifyToken
-  // let tokenStatus = '登录态有效'
-
-  // try {
-  //   verifyToken = jwt.verify(token, secretOrPrivateKey)
-  //   // console.log(verifyToken)
-  // } catch (err) {
-  //   // console.log(err.message === 'jwt expired', 'true表示token已过期')
-  //   if (err.message === 'jwt expired') {
-  //     tokenStatus = '登录态失效'
-  //   }
-  // }
 
   try {
     let ret = await mysqlShop.getShopList()
