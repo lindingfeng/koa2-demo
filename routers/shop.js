@@ -66,10 +66,16 @@ router.post('/api/operationCategory', async (ctx, next) => {
 */
 router.post('/api/getCategory', async (ctx, next) => {
 
+  const { 
+    pageIndex,
+    pageSize
+   } = ctx.request.body
+
   try {
-    let ret = await mysqlShop.getCategory()
+    let ret = await mysqlShop.getCategory(pageIndex, pageSize)
     ctx.response.body = configStatus({
-      categoryList: ret
+      categoryList: ret[0],
+      total: ret[1][0].total
     })
   } catch (err) {
     console.log(err)
@@ -108,10 +114,16 @@ router.post('/api/addShop', async (ctx, next) => {
 */
 router.post('/api/getShopList', async (ctx, next) => {
 
+  const { 
+    pageIndex,
+    pageSize
+   } = ctx.request.body
+
   try {
-    let ret = await mysqlShop.getShopList()
+    let ret = await mysqlShop.getShopList(pageIndex, pageSize)
     ctx.response.body = configStatus({
-      shopList: ret
+      shopList: ret[0],
+      total: ret[1][0].total
     })
   } catch (err) {
     console.log(err)

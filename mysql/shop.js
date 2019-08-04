@@ -138,12 +138,16 @@ const editCategory = ({
  * @author: lindingfeng
  * @date: 2019-07-20 15:29:52
 */
-const getCategory = () => {
+const getCategory = (pageIndex = 1, pageSize = 10) => {
+
+  const offset = (pageIndex - 1) * pageSize
 
   return new Promise((resolve, reject) => {
 
     connection.query(
-      `select * from lin.shop_category_list`,
+      // `select * from lin.shop_category_list limit ${offset}, ${pageSize}`,
+      `SELECT SQL_CALC_FOUND_ROWS * FROM lin.shop_category_list limit ${offset}, ${pageSize};
+       SELECT FOUND_ROWS() as total;`,
     (error, results) => { 
 
       if (error) {
@@ -152,7 +156,7 @@ const getCategory = () => {
       }
 
       if (results) {
-        results.forEach(ele => {
+        results[0].forEach(ele => {
           ele.create_time = dayjs.unix(ele.create_time).format("YYYY-MM-DD HH:mm:ss")
         })
         resolve(results)
@@ -253,12 +257,15 @@ const addShop = ({
  * @author: lindingfeng
  * @date: 2019-07-20 18:16:23
 */
-const getShopList = () => {
+const getShopList = (pageIndex = 1, pageSize = 10) => {
+
+  const offset = (pageIndex - 1) * pageSize
 
   return new Promise((resolve, reject) => {
 
     connection.query(
-      `select * from lin.shop_list`,
+      `SELECT SQL_CALC_FOUND_ROWS * FROM lin.shop_list limit ${offset}, ${pageSize};
+       SELECT FOUND_ROWS() as total;`,
     (error, results) => { 
 
       if (error) {
@@ -267,7 +274,7 @@ const getShopList = () => {
       }
 
       if (results) {
-        results.forEach(ele => {
+        results[0].forEach(ele => {
           ele.shop_banner = JSON.parse(ele.shop_banner)
         })
         resolve(results)

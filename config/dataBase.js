@@ -3,7 +3,8 @@ module.exports = {
     host: '132.232.35.229',
     user: 'root',
     password: 'wsjj1994',
-    database: 'lin'
+    database: 'lin',
+    multipleStatements: true
   },
   // mongodb: {
   //   host: '132.232.35.229',
