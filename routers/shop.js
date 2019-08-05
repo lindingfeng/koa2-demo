@@ -8,7 +8,6 @@ const configStatus = require('../utils/configStatus')
  * @author: lindingfeng
  * @date: 2019-07-20 14:49:21
 */
-// router.post('/api/addCategory', async (ctx, next) => {
 router.post('/api/operationCategory', async (ctx, next) => {
 
   const { 
@@ -52,6 +51,34 @@ router.post('/api/operationCategory', async (ctx, next) => {
       ctx.response.body = configStatus()
     } else if (+ret.status === 2) {
       ctx.response.body = configStatus({}, 1008, '该分类已存在')
+    }
+  } catch (err) {
+    console.log(err)
+  }
+
+})
+
+/*
+ * @Description: 删除商品分类
+ * @Author: lindingfeng
+ * @Date: 2019-08-05 15:28:31
+*/
+router.post('/api/deleteCategory', async (ctx, next) => {
+
+  const { 
+    category_ids
+  } = ctx.request.body
+
+  if (!category_ids) {
+    ctx.response.body = configStatus({}, 1014, '分类id不能为空')
+  }
+
+  try {
+    let ret = await mysqlShop.deleteCategory(category_ids)
+    if (+ret.status === 1) {
+      ctx.response.body = configStatus()
+    } else if (+ret.status === 2) {
+      ctx.response.body = configStatus({}, 1015, '分类删除失败')
     }
   } catch (err) {
     console.log(err)

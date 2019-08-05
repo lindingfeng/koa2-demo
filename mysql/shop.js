@@ -134,6 +134,44 @@ const editCategory = ({
 }
 
 /*
+ * @Description: 删除商品分类
+ * @Author: lindingfeng
+ * @Date: 2019-08-05 14:48:15
+*/
+const deleteCategory = (category_ids) => {
+
+  return new Promise((resolve, reject) => {
+
+    connection.query(
+      `delete from lin.shop_category_list where category_id in (${category_ids})`,
+    (error, results, fields) => {
+      console.log(error, results, fields)
+
+      if (error) {
+        reject(error)
+        return
+      }
+
+      if (results.affectedRows > 0) {
+        resolve({
+          status: 1,
+          tip: '分类删除成功'
+        })
+        return
+      }
+
+      resolve({
+        status: 2,
+        tip: '分类删除失败'
+      })
+
+    })
+    
+  })
+
+}
+
+/*
  * @description: 获取商品分类
  * @author: lindingfeng
  * @date: 2019-07-20 15:29:52
@@ -146,7 +184,7 @@ const getCategory = (pageIndex = 1, pageSize = 10) => {
 
     connection.query(
       // `select * from lin.shop_category_list limit ${offset}, ${pageSize}`,
-      `SELECT SQL_CALC_FOUND_ROWS * FROM lin.shop_category_list limit ${offset}, ${pageSize};
+      `SELECT SQL_CALC_FOUND_ROWS * FROM lin.shop_category_list ORDER BY create_time DESC limit ${offset}, ${pageSize};
        SELECT FOUND_ROWS() as total;`,
     (error, results) => { 
 
@@ -289,6 +327,7 @@ const getShopList = (pageIndex = 1, pageSize = 10) => {
 module.exports = {
   addCategory,
   editCategory,
+  deleteCategory,
   getCategory,
   addShop,
   getShopList
