@@ -100,10 +100,11 @@ const editCategory = ({
 
         connection.query(
           `update lin.shop_category_list set
-            category_name='${category_name}',
-            category_icon='${category_icon}',
-            category_status=${category_status}
-            where category_id=${Number(category_id)};`,
+           category_name='${category_name}',
+           category_icon='${category_icon}',
+           category_status=${category_status}
+           where category_id=${Number(category_id)};
+          `,
         (error, results) => {
     
           if (error) {
@@ -114,7 +115,7 @@ const editCategory = ({
           if (results.affectedRows) {
             resolve({
               status: 1,
-              tip: '分类添加成功'
+              tip: '分类编辑成功'
             })
           }
     
@@ -219,7 +220,8 @@ const addShop = ({
   shop_price,
   shop_content,
   shop_num,
-  shop_freight
+  shop_freight,
+  shop_status
 }) => {
 
   return new Promise((resolve, reject) => {
@@ -244,8 +246,9 @@ const addShop = ({
           '${results[0].category_name}',
           '${shop_price}',
           '${shop_content}',
-           ${shop_num},
-          '${shop_freight}'
+          '${shop_num}',
+          '${shop_freight}',
+           ${shop_status}
         `
         connection.query(
           `insert into lin.shop_list(
@@ -257,7 +260,8 @@ const addShop = ({
             shop_price,
             shop_content,
             shop_num,
-            shop_freight
+            shop_freight,
+            shop_status
           ) values(
             ${shopInfo}
           )`,
@@ -281,7 +285,82 @@ const addShop = ({
 
       resolve({
         status: 2,
-        tip: '未找到该商品id对应的分类'
+        tip: '未找到该分类'
+      })
+
+    })
+    
+  })
+
+}
+
+/*
+ * @Description: 编辑商品
+ * @Author: lindingfeng
+ * @Date: 2019-08-06 18:55:14
+*/
+const editShop = ({
+  shop_id,
+  shop_banner,
+  shop_name,
+  shop_category_id,
+  shop_price,
+  shop_content,
+  shop_num,
+  shop_freight,
+  shop_status
+}) => {
+
+  return new Promise((resolve, reject) => {
+
+    connection.query(
+      `select * from lin.shop_category_list where category_id=${shop_category_id}`,
+    (error, results) => { 
+
+      if (error) {
+        reject(error)
+        return
+      }
+
+      console.log(error, results)
+      
+      // 找到商品分类
+      if (results.length) {
+
+        connection.query(
+          `update lin.shop_list set
+            shop_banner='${JSON.stringify(shop_banner)}',
+            shop_name='${shop_name}',
+            shop_category_id=${shop_category_id},
+            shop_category='${results[0].category_name}',
+            shop_price='${shop_price}',
+            shop_content='${shop_content}',
+            shop_num='${shop_num}',
+            shop_freight='${shop_freight}',
+            shop_status=${shop_status}
+           where shop_id='${shop_id}';
+          `,
+        (error, results) => {
+    
+          if (error) {
+            reject(error)
+            return
+          }
+  
+          if (results.affectedRows) {
+            resolve({
+              status: 1,
+              tip: '商品编辑成功'
+            })
+          }
+    
+        })
+        return
+      }
+
+      resolve({
+        status: 2,
+        tip: '未找到该分类'
       })
 
     })
@@ -302,7 +381,7 @@ const getShopList = (pageIndex = 1, pageSize = 10) => {
   return new Promise((resolve, reject) => {
 
     connection.query(
-      `SELECT SQL_CALC_FOUND_ROWS * FROM lin.shop_list limit ${offset}, ${pageSize};
+      `SELECT SQL_CALC_FOUND_ROWS * FROM lin.shop_list ORDER BY create_time DESC limit ${offset}, ${pageSize};
        SELECT FOUND_ROWS() as total;`,
     (error, results) => { 
 
@@ -314,6 +393,7 @@ const getShopList = (pageIndex = 1, pageSize = 10) => {
       if (results) {
         results[0].forEach(ele => {
           ele.shop_banner = JSON.parse(ele.shop_banner)
+          ele.create_time = dayjs.unix(ele.create_time).format("YYYY-MM-DD HH:mm:ss")
         })
         resolve(results)
       }
@@ -330,5 +410,6 @@ module.exports = {
   deleteCategory,
   getCategory,
   addShop,
+  editShop,
   getShopList
 }

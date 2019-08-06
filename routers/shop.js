@@ -1,10 +1,9 @@
 const router = require('koa-router')()
-const jwt = require('jsonwebtoken');
 const mysqlShop = require('../mysql/shop')
 const configStatus = require('../utils/configStatus')
 
 /*
- * @description: 添加商品分类
+ * @description: 添加/编辑商品分类
  * @author: lindingfeng
  * @date: 2019-07-20 14:49:21
 */
@@ -115,18 +114,51 @@ router.post('/api/getCategory', async (ctx, next) => {
  * @author: lindingfeng
  * @date: 2019-07-20 17:22:18
 */
-router.post('/api/addShop', async (ctx, next) => {
+router.post('/api/operationShop', async (ctx, next) => {
 
-  const shopInfo = ctx.request.body
+  const { 
+    shop_id,
+    shop_category_id,
+    shop_name,
+    shop_banner,
+    shop_price,
+    shop_content,
+    shop_num,
+    shop_freight,
+    shop_status
+  } = ctx.request.body
+
+  if (
+    !shop_category_id || !shop_name || !shop_banner.length || !shop_price ||
+    !shop_content || !shop_num || !shop_freight || !shop_status
+  ) {
+    ctx.response.body = configStatus({}, 1016, '商品信息不完整')
+  }
+
+  if (shop_id) {
+    try {
+      let ret = await mysqlShop.editShop({
+        ...ctx.request.body
+      })
+      if (+ret.status === 1) {
+        ctx.response.body = configStatus()
+      }else if (+ret.status === 2) {
+        ctx.response.body = configStatus({}, 1009, '未找到对应的商品分类')
+      }
+    } catch (err) {
+      console.log(err)
+    }
+    return
+  }
 
   try {
     let ret = await mysqlShop.addShop({
-      ...shopInfo
+      ...ctx.request.body
     })
     if (+ret.status === 1) {
       ctx.response.body = configStatus()
     }else if (+ret.status === 2) {
-      ctx.response.body = configStatus({}, 1009, '未找到该商品id对应的分类')
+      ctx.response.body = configStatus({}, 1009, '未找到对应的商品分类')
     }
   } catch (err) {
     console.log(err)
