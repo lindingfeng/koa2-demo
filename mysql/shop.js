@@ -146,7 +146,6 @@ const deleteCategory = (category_ids) => {
     connection.query(
       `delete from lin.shop_category_list where category_id in (${category_ids})`,
     (error, results, fields) => {
-      console.log(error, results, fields)
 
       if (error) {
         reject(error)
@@ -322,8 +321,6 @@ const editShop = ({
         return
       }
 
-      console.log(error, results)
-      
       // 找到商品分类
       if (results.length) {
 
