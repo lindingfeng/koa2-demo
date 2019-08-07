@@ -167,19 +167,52 @@ router.post('/api/operationShop', async (ctx, next) => {
 })
 
 /*
+ * @description: 上/下架商品
+ * @author: lindingfeng
+ * @date: 2019-08-07 21:00:27
+*/
+router.post('/api/editShopStatus', async (ctx, next) => {
+
+  const { 
+    shop_ids,
+    shop_status
+  } = ctx.request.body
+
+  if (!shop_ids || !shop_status) {
+    ctx.response.body = configStatus({}, 1018, '商品信息不完整')
+  }
+
+  try {
+    let ret = await mysqlShop.editShopStatus({
+      shop_ids: shop_ids.split(','),
+      shop_status
+    })
+    if (+ret.status === 1) {
+      ctx.response.body = configStatus()
+    }else if (+ret.status === 2) {
+      ctx.response.body = configStatus({}, 1017, '商品状态操作失败')
+    }
+  } catch (err) {
+    console.log(err)
+  }
+
+})
+
+/*
  * @description: 获取商品列表
  * @author: lindingfeng
  * @date: 2019-07-20 18:17:27
 */
 router.post('/api/getShopList', async (ctx, next) => {
 
-  const { 
+  const {
+    type,
     pageIndex,
     pageSize
    } = ctx.request.body
 
   try {
-    let ret = await mysqlShop.getShopList(pageIndex, pageSize)
+    let ret = await mysqlShop.getShopList(type, pageIndex, pageSize)
     ctx.response.body = configStatus({
       shopList: ret[0],
       total: ret[1][0].total

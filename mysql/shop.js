@@ -49,7 +49,7 @@ const addCategory = ({
           '${category_name}',
           '${category_icon}',
            ${category_status},
-           ${dayjs().unix()}
+          '${dayjs().unix()}'
         )`,
       (error, results) => {
   
@@ -247,7 +247,8 @@ const addShop = ({
           '${shop_content}',
           '${shop_num}',
           '${shop_freight}',
-           ${shop_status}
+           ${shop_status},
+          '${dayjs().unix()}'
         `
         connection.query(
           `insert into lin.shop_list(
@@ -260,7 +261,8 @@ const addShop = ({
             shop_content,
             shop_num,
             shop_freight,
-            shop_status
+            shop_status,
+            create_time
           ) values(
             ${shopInfo}
           )`,
@@ -367,19 +369,77 @@ const editShop = ({
 }
 
 /*
+ * @description: 上/下架商品
+ * @author: lindingfeng
+ * @date: 2019-08-07 21:00:27
+*/
+const editShopStatus = ({
+  shop_ids,
+  shop_status
+}) => {
+
+  return new Promise((resolve, reject) => {
+
+    let sql = ''
+
+    shop_ids.forEach(ele => {
+      sql += `update lin.shop_list set shop_status=${shop_status} where shop_id='${ele}';`
+    })
+
+    connection.query(
+      sql,
+    (error, results) => {
+
+      if (error) {
+        reject(error)
+        return
+      }
+      // console.log(results)
+
+      if (
+        (shop_ids.length > 1 && results.length) ||
+        (shop_ids.length === 1 && results.affectedRows)
+      ) {
+        resolve({
+          status: 1,
+          tip: '商品上下架成功'
+        })
+        return
+      }
+
+      resolve({
+        status: 2,
+        tip: '商品上下架失败'
+      })
+
+    })
+    
+  })
+
+}
+
+/*
  * @description: 获取商品列表
  * @author: lindingfeng
  * @date: 2019-07-20 18:16:23
 */
-const getShopList = (pageIndex = 1, pageSize = 10) => {
+const getShopList = (type, pageIndex = 1, pageSize = 10) => {
 
   const offset = (pageIndex - 1) * pageSize
+  let sql = ''
+
+  if (type && (+type === 0 || +type === 1)) {
+    sql += `SELECT SQL_CALC_FOUND_ROWS * FROM lin.shop_list where shop_status=${type} ORDER BY create_time DESC limit ${offset}, ${pageSize};`
+  } else {
+    sql += `SELECT SQL_CALC_FOUND_ROWS * FROM lin.shop_list ORDER BY create_time DESC limit ${offset}, ${pageSize};`
+  }
+
+  sql += `SELECT FOUND_ROWS() as total;`
 
   return new Promise((resolve, reject) => {
 
     connection.query(
-      `SELECT SQL_CALC_FOUND_ROWS * FROM lin.shop_list ORDER BY create_time DESC limit ${offset}, ${pageSize};
-       SELECT FOUND_ROWS() as total;`,
+      sql,
     (error, results) => { 
 
       if (error) {
@@ -408,5 +468,6 @@ module.exports = {
   getCategory,
   addShop,
   editShop,
+  editShopStatus,
   getShopList
 }
