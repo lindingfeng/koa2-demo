@@ -145,7 +145,7 @@ const deleteCategory = (category_ids) => {
 
     connection.query(
       `delete from lin.shop_category_list where category_id in (${category_ids})`,
-    (error, results, fields) => {
+    (error, results) => {
 
       if (error) {
         reject(error)
@@ -369,6 +369,47 @@ const editShop = ({
 }
 
 /*
+ * @Description: 删除商品
+ * @Author: lindingfeng
+ * @Date: 2019-08-08 10:37:06
+*/
+const deleteShop = (shop_ids) => {
+
+  return new Promise((resolve, reject) => {
+
+    let shop_id_arr = []
+    shop_ids.split(',').forEach(ele => {
+      shop_id_arr.push(`'${ele}'`)
+    })
+
+    connection.query(
+      `delete from lin.shop_list where shop_id in (${shop_id_arr.join(',')})`,
+    (error, results) => {
+      if (error) {
+        reject(error)
+        return
+      }
+
+      if (results.affectedRows > 0) {
+        resolve({
+          status: 1,
+          tip: '商品删除成功'
+        })
+        return
+      }
+
+      resolve({
+        status: 2,
+        tip: '商品删除失败'
+      })
+
+    })
+    
+  })
+
+}
+
+/*
  * @description: 上/下架商品
  * @author: lindingfeng
  * @date: 2019-08-07 21:00:27
@@ -468,6 +509,7 @@ module.exports = {
   getCategory,
   addShop,
   editShop,
+  deleteShop,
   editShopStatus,
   getShopList
 }

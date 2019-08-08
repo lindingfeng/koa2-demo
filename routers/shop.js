@@ -167,6 +167,34 @@ router.post('/api/operationShop', async (ctx, next) => {
 })
 
 /*
+ * @Description: 删除商品
+ * @Author: lindingfeng
+ * @Date: 2019-08-08 10:43:50
+*/
+router.post('/api/deleteShop', async (ctx, next) => {
+
+  const { 
+    shop_ids
+  } = ctx.request.body
+
+  if (!shop_ids) {
+    ctx.response.body = configStatus({}, 1014, '商品id不能为空')
+  }
+
+  try {
+    let ret = await mysqlShop.deleteShop(shop_ids)
+    if (+ret.status === 1) {
+      ctx.response.body = configStatus()
+    } else if (+ret.status === 2) {
+      ctx.response.body = configStatus({}, 1019, '商品删除失败')
+    }
+  } catch (err) {
+    console.log(err)
+  }
+
+})
+
+/*
  * @description: 上/下架商品
  * @author: lindingfeng
  * @date: 2019-08-07 21:00:27
