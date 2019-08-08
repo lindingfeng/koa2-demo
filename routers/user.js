@@ -13,7 +13,7 @@ router.post('/api/login', async (ctx, next) => {
   const { phone, password } = ctx.request.body
 
   try {
-    let ret = await mysqlUser.login(phone, password)
+    let ret = await mysqlUser.login(phone, password, type = 0)
 
     if (+ret.status === 1) {
 
@@ -29,6 +29,44 @@ router.post('/api/login', async (ctx, next) => {
     } else if (+ret.status === 3) {
 
       ctx.response.body = configStatus({}, 1003, '密码错误')
+
+    }
+
+  } catch (err) {
+    console.log(err.errno)
+  }
+
+})
+
+/*
+ * @description: 后台登陆
+ * @author: lindingfeng
+ * @date: 2019-08-08 23:30:11
+*/
+router.post('/api/admin/login', async (ctx, next) => {
+
+  const { phone, password } = ctx.request.body
+
+  try {
+    let ret = await mysqlUser.login(phone, password, type = 1)
+
+    if (+ret.status === 1) {
+
+      ctx.response.body = configStatus({
+        ...ret.userInfo
+      })
+
+    } else if (+ret.status === 2) {
+
+      ctx.response.body = configStatus({}, 1002, '该账户不存在')
+
+    } else if (+ret.status === 3) {
+
+      ctx.response.body = configStatus({}, 1003, '密码错误')
+
+    } else if (+ret.status === 4) {
+
+      ctx.response.body = configStatus({}, 1004, '该账户没有权限')
 
     }
 
@@ -73,20 +111,24 @@ router.post('/api/checkLoginState', async (ctx, next) => {
 */
 router.post('/api/registered', async (ctx, next) => {
 
-  const { phone, password } = ctx.request.body
+  const { phone, password, type } = ctx.request.body
 
   try {
-    let ret = await mysqlUser.registered(phone, password)
+    let ret = await mysqlUser.registered(phone, password, type)
 
     if (+ret.status === 1) {
 
       ctx.response.body = configStatus({
-        ...ret
+        token: ret.token
       })
 
     } else if (+ret.status === 2) {
 
       ctx.response.body = configStatus({}, 1004, '手机号已注册')
+
+    } else {
+
+      ctx.response.body = configStatus({}, 1004, '注册失败!')
 
     }
 

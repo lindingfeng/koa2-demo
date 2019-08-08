@@ -10,11 +10,11 @@ const connection = mysql.createConnection({
 connection.connect();
 
 /*
- * @description: 用户登录
+ * @description: 用户登录(用户端与后台系统通用)
  * @author: lindingfeng
  * @date: 2019-07-11 22:40:13
 */
-const login = (phone, password) => {
+const login = (phone, password, type) => {
 
   return new Promise((resolve, reject) => {
 
@@ -35,29 +35,39 @@ const login = (phone, password) => {
         if (results[0].password === sha1(password)) {
 
           const secretOrPrivateKey = 'lindingfeng'
-          const userId = results[0].user_id
+          const userId = results[0].id
           const token = jwt.sign({ userId }, secretOrPrivateKey, { expiresIn: 60*10 })
 
-          connection.query(
-            `update lin.user_list set token='${token}' where phone='${phone}'`,
-          (error, results) => {
+          if (type === 1) {
 
-            if (error) {
-              reject(error)
+            if (+results[0].role === 1) {
+
+              resolve({
+                status: 1,
+                userInfo: {
+                  phone: results[0].phone,
+                  avatar: results[0].avatar,
+                  token: token
+                }
+              })
+
               return
             }
 
-            if (results.affectedRows) {
-              resolve({
-                status: 1,
-                token: token
-              })
-            }
+            resolve({
+              status: 4,
+              tip: '该账户没有权限'
+            })
 
+            return
+          }
+
+          resolve({
+            status: 1,
+            token: token
           })
 
           return
-
         }
 
         // 密码错误
@@ -86,7 +96,7 @@ const login = (phone, password) => {
  * @author: lindingfeng
  * @date: 2019-07-11 23:40:41
 */
-const registered = (phone, password) => {
+const registered = (phone, password, type) => {
 
   return new Promise((resolve, reject) => {
 
@@ -110,19 +120,16 @@ const registered = (phone, password) => {
       }
 
       // 用户未注册
-      const secretOrPrivateKey = 'lindingfeng'
-      const userId = parseInt(Math.random()*100)
-      const token = jwt.sign({ userId }, secretOrPrivateKey, { expiresIn: 60 })
-      const userInfo = `${userId}, '${phone}', '${sha1(password)}', '${token}'`
+      const userInfo = `'${phone}', '${sha1(password)}', ${+type === 1 ? 1 : 0}`
 
       connection.query(
         `insert into lin.user_list(
-          user_id,
           phone,
           password,
-          token
+          role
         ) values(${userInfo})`,
       (error, results) => {
+        console.log(error, results)
         
         if (error) {
           reject(error)
@@ -130,11 +137,19 @@ const registered = (phone, password) => {
         }
 
         if (results.affectedRows) {
+          const userId = results.insertId
+          const secretOrPrivateKey = 'lindingfeng'
+          const token = jwt.sign({ userId }, secretOrPrivateKey, { expiresIn: 60*10 })
           resolve({
             status: 1,
             token: token
           })
+          return
         }
+
+        resolve({
+          status: 3
+        })
 
       })
 
