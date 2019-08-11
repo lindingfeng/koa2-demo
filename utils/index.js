@@ -1,9 +1,11 @@
+const jwt = require('jsonwebtoken')
+
 /*
  * @description: 判断数据类型是否为数组
  * @author: lindingfeng
  * @date: 2019-08-02 23:09:03
 */
-export const isObject = (data) => {
+const isObject = (data) => {
   return Object.prototype.toString.call(obj) === '[Object Object]'
 }
 
@@ -12,7 +14,7 @@ export const isObject = (data) => {
  * @author: lindingfeng
  * @date: 2019-08-02 23:09:03
 */
-export const isArray = (data) => {
+const isArray = (data) => {
   return Array.isArray(data)
 }
 
@@ -21,7 +23,7 @@ export const isArray = (data) => {
  * @author: lindingfeng
  * @date: 2019-08-02 23:09:03
 */
-export const verifyFloatPrice = (data) => {
+const verifyFloatPrice = (data) => {
   return /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/.test(data)
 }
 
@@ -30,6 +32,32 @@ export const verifyFloatPrice = (data) => {
  * @author: lindingfeng
  * @date: 2019-08-02 23:09:03
 */
-export const verifyFloatPrice = (data) => {
+const verifyNumber = (data) => {
   return /^([0]{1}|[1-9]{1}[0-9]*)$/.test(data)
+}
+
+/*
+ * @description: 校验token的有效性
+ * @author: lindingfeng
+ * @date: 2019-08-09 23:40:24
+*/
+const verifyToken = (token) => {
+  try {
+    jwt.verify(token, 'lindingfeng')
+    return true
+  } catch (err) {
+    // console.log('------', err.message === 'jwt expired'?'token已过期':'', '------')
+    // if (err.message === 'jwt expired') {
+    //   tokenStatus = 2
+    // }
+    return false
+  }
+}
+
+module.exports = {
+  isObject,
+  isArray,
+  verifyFloatPrice,
+  verifyNumber,
+  verifyToken
 }

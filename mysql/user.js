@@ -36,15 +36,20 @@ const login = (phone, password, type) => {
 
           const secretOrPrivateKey = 'lindingfeng'
           const userId = results[0].id
-          const token = jwt.sign({ userId }, secretOrPrivateKey, { expiresIn: 60*10 })
+          const token = jwt.sign({ userId }, secretOrPrivateKey, { expiresIn: 60*5 })
+          
+          // admin登陆
+          if (type !== 0) {
 
-          if (type === 1) {
-
-            if (+results[0].role === 1) {
+            if (
+              +results[0].role === 1 ||
+              +results[0].role === 2
+            ) {
 
               resolve({
                 status: 1,
                 userInfo: {
+                  role: results[0].role,
                   phone: results[0].phone,
                   avatar: results[0].avatar,
                   token: token
@@ -62,6 +67,7 @@ const login = (phone, password, type) => {
             return
           }
 
+          // 用户登陆
           resolve({
             status: 1,
             token: token
@@ -96,7 +102,7 @@ const login = (phone, password, type) => {
  * @author: lindingfeng
  * @date: 2019-07-11 23:40:41
 */
-const registered = (phone, password, type) => {
+const registered = (phone, password, type = 0) => {
 
   return new Promise((resolve, reject) => {
 
@@ -120,7 +126,7 @@ const registered = (phone, password, type) => {
       }
 
       // 用户未注册
-      const userInfo = `'${phone}', '${sha1(password)}', ${+type === 1 ? 1 : 0}`
+      const userInfo = `'${phone}', '${sha1(password)}', ${type}`
 
       connection.query(
         `insert into lin.user_list(

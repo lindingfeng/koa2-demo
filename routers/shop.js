@@ -1,6 +1,7 @@
 const router = require('koa-router')()
 const mysqlShop = require('../mysql/shop')
 const configStatus = require('../utils/configStatus')
+const { verifyToken } = require('../utils')
 
 /*
  * @description: 添加/编辑商品分类
@@ -9,12 +10,18 @@ const configStatus = require('../utils/configStatus')
 */
 router.post('/api/operationCategory', async (ctx, next) => {
 
-  const { 
+  const {
+    token,
     category_id,
     category_name,
     category_icon,
     category_status
-   } = ctx.request.body
+  } = ctx.request.body
+
+  if (!verifyToken(token)) {
+    ctx.response.body = configStatus({}, 1010, '未登录或登录态已失效')
+    return
+  }
 
   if (!category_name || !category_icon || !category_status) {
     ctx.response.body = configStatus({}, 1012, '请完善分类信息')
@@ -65,8 +72,14 @@ router.post('/api/operationCategory', async (ctx, next) => {
 router.post('/api/deleteCategory', async (ctx, next) => {
 
   const { 
+    token,
     category_ids
   } = ctx.request.body
+
+  if (!verifyToken(token)) {
+    ctx.response.body = configStatus({}, 1010, '未登录或登录态已失效')
+    return
+  }
 
   if (!category_ids) {
     ctx.response.body = configStatus({}, 1014, '分类id不能为空')
@@ -92,10 +105,16 @@ router.post('/api/deleteCategory', async (ctx, next) => {
 */
 router.post('/api/getCategory', async (ctx, next) => {
 
-  const { 
+  const {
+    token,
     pageIndex,
     pageSize
-   } = ctx.request.body
+  } = ctx.request.body
+
+  if (!verifyToken(token)) {
+    ctx.response.body = configStatus({}, 1010, '未登录或登录态已失效')
+    return
+  }
 
   try {
     let ret = await mysqlShop.getCategory(pageIndex, pageSize)
@@ -117,6 +136,7 @@ router.post('/api/getCategory', async (ctx, next) => {
 router.post('/api/operationShop', async (ctx, next) => {
 
   const { 
+    token,
     shop_id,
     shop_category_id,
     shop_name,
@@ -127,6 +147,11 @@ router.post('/api/operationShop', async (ctx, next) => {
     shop_freight,
     shop_status
   } = ctx.request.body
+
+  if (!verifyToken(token)) {
+    ctx.response.body = configStatus({}, 1010, '未登录或登录态已失效')
+    return
+  }
 
   if (
     !shop_category_id || !shop_name || !shop_banner.length || !shop_price ||
@@ -173,9 +198,15 @@ router.post('/api/operationShop', async (ctx, next) => {
 */
 router.post('/api/deleteShop', async (ctx, next) => {
 
-  const { 
+  const {
+    token,
     shop_ids
   } = ctx.request.body
+
+  if (!verifyToken(token)) {
+    ctx.response.body = configStatus({}, 1010, '未登录或登录态已失效')
+    return
+  }
 
   if (!shop_ids) {
     ctx.response.body = configStatus({}, 1014, '商品id不能为空')
@@ -201,10 +232,16 @@ router.post('/api/deleteShop', async (ctx, next) => {
 */
 router.post('/api/editShopStatus', async (ctx, next) => {
 
-  const { 
+  const {
+    token,
     shop_ids,
     shop_status
   } = ctx.request.body
+
+  if (!verifyToken(token)) {
+    ctx.response.body = configStatus({}, 1010, '未登录或登录态已失效')
+    return
+  }
 
   if (!shop_ids || !shop_status) {
     ctx.response.body = configStatus({}, 1018, '商品信息不完整')
@@ -234,10 +271,16 @@ router.post('/api/editShopStatus', async (ctx, next) => {
 router.post('/api/getShopList', async (ctx, next) => {
 
   const {
+    token,
     type,
     pageIndex,
     pageSize
-   } = ctx.request.body
+  } = ctx.request.body
+
+  if (!verifyToken(token)) {
+    ctx.response.body = configStatus({}, 1010, '未登录或登录态已失效')
+    return
+  }
 
   try {
     let ret = await mysqlShop.getShopList(type, pageIndex, pageSize)
