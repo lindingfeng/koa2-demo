@@ -36,7 +36,7 @@ const login = (phone, password, type) => {
 
           const secretOrPrivateKey = 'lindingfeng'
           const userId = results[0].id
-          const token = jwt.sign({ userId }, secretOrPrivateKey, { expiresIn: 60*5 })
+          const token = jwt.sign({ userId }, secretOrPrivateKey, { expiresIn: 60*10 })
           
           // admin登陆
           if (type !== 0) {
