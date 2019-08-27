@@ -14,8 +14,10 @@ router.post('/api/uploadfile', async (ctx, next) => {
   const upStream = fs.createWriteStream(filePath)
   // 可读流通过管道写入可写流
   reader.pipe(upStream)
+  console.log(ctx.request.origin)
+  console.log(`${ctx.request.origin}/static/${file.name}`)
   ctx.response.body = configStatus({
-    src: `http://${ctx.request.host}/static/${file.name}`
+    src: `https://static.lindf.com/static/${file.name}`
   })
 })
 
