@@ -54,10 +54,30 @@ const verifyToken = (token) => {
   }
 }
 
+/*
+ * @Description: 生成随机字符串
+ * @Author: lindingfeng
+ * @Date: 2019-08-28 14:50:47
+*/
+const buildRamStr = (len = 8) => {
+  let str = ''
+  let someStr = [
+    'a','b','c','d','e','f','g','h','i','j','k',
+    '0','1','2','3','4','5','6','7','8','9',
+    'A','B','C','D','E','F','G','H','I','J','K'
+  ]
+  for (let i=0;i<len;i++) {
+    let idx = Math.ceil(Math.random() * someStr.length - 1)
+    str += someStr[idx]
+  }
+  return str
+}
+
 module.exports = {
   isObject,
   isArray,
   verifyFloatPrice,
   verifyNumber,
-  verifyToken
+  verifyToken,
+  buildRamStr
 }

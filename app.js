@@ -23,6 +23,7 @@ const orderRouter = require('./routers/order');
 const userRouter = require('./routers/user');
 const addressRouter = require('./routers/address');
 const uploadfileRouter = require('./routers/uploadfile');
+const commonRouter = require('./routers/common');
 
 // 创建一个Koa对象
 const app = new Koa()
@@ -51,6 +52,7 @@ app.use(orderRouter.routes())
 app.use(userRouter.routes())
 app.use(addressRouter.routes())
 app.use(uploadfileRouter.routes())
+app.use(commonRouter.routes())
 
 app.listen(3000)
 console.log(`app started at port 3000 for MySQL...`)

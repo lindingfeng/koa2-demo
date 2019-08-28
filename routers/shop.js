@@ -1,7 +1,9 @@
 const router = require('koa-router')()
 const mysqlShop = require('../mysql/shop')
+const axios = require('axios')
+const sha1 = require('sha1')
 const configStatus = require('../utils/configStatus')
-const { verifyToken } = require('../utils')
+const { verifyToken, buildRamStr } = require('../utils')
 
 /*
  * @description: 添加/编辑商品分类
@@ -288,6 +290,7 @@ router.post('/api/getShopList', async (ctx, next) => {
       shopList: ret[0],
       total: ret[1][0].total
     })
+
   } catch (err) {
     console.log(err)
   }
