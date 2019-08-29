@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const qiniu = require('qiniu')
 
 /*
  * @description: 判断数据类型是否为数组
@@ -73,11 +74,55 @@ const buildRamStr = (len = 8) => {
   return str
 }
 
+/*
+ * @description: 七牛云上传
+ * @author: lindingfeng
+ * @date: 2019-08-29 22:57:32
+*/
+const uploadUseQiniu = (bucket = 'static', readableStream) => {
+  return new Promise((resolve, reject) => {
+
+    // Access Key 和 Secret Key
+    qiniu.conf.ACCESS_KEY = '07cNA0MRmRdC0saj02AeoG_UJOwUSlkonrFWP_EK'
+    qiniu.conf.SECRET_KEY = '4WPSaPhzGe9Cjmh1os8rwZ6dUYVz8NgxDRXuk2mN'
+
+    //要上传的空间
+    const config = new qiniu.conf.Config()
+    config.zone = qiniu.zone.Zone_z2
+
+    //上传到七牛后保存的文件名
+    const key = ''
+
+    //构建上传策略函数
+    const putPolicy = new qiniu.rs.PutPolicy({
+      scope: bucket
+    })
+    const token = putPolicy.uploadToken()
+
+    //构造上传函数
+    const formUploader = new qiniu.form_up.FormUploader(config)
+    const extra = new qiniu.form_up.PutExtra()
+    formUploader.putStream(token, key, readableStream, extra,
+      (respErr, respBody, respInfo) => {
+        if (respErr) {
+          reject(respErr)
+        }
+        if (respInfo.statusCode == 200) {
+          // console.log(respBody)
+          resolve(respBody)
+        } else {
+          reject(respBody)
+        }
+    })
+  })
+}
+
 module.exports = {
   isObject,
   isArray,
   verifyFloatPrice,
   verifyNumber,
   verifyToken,
-  buildRamStr
+  buildRamStr,
+  uploadUseQiniu
 }
