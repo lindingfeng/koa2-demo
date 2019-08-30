@@ -7,7 +7,6 @@ const { uploadUseQiniu } = require('../utils')
 router.post('/api/uploadfile', async (ctx, next) => {
   // 获取上传文件
   const file = ctx.request.files.file
-  console.log(file)
   // 创建可读流
   const reader = fs.createReadStream(file.path)
   // 设置图片目录
